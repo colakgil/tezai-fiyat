@@ -63,10 +63,24 @@
   aside .pdf:hover { background: rgba(255,255,255,.1); }
   aside .eposta { background: var(--yesil); color: var(--koyu); border-color: var(--yesil); } aside .eposta:hover { background: #a2d65a; } aside .pdf svg { width: 18px; height: 18px; }
   #cikti { display: none; }
+  .perde { position: fixed; inset: 0; z-index: 50; background: rgba(15,23,42,.55); display: none; align-items: center; justify-content: center; padding: 16px; }
+  .perde.acik { display: flex; }
+  .form { background: #fff; color: var(--koyu); border-radius: 18px; width: 100%; max-width: 440px; max-height: calc(100vh - 32px); overflow: auto; padding: 24px; box-shadow: 0 24px 60px rgba(0,0,0,.3); }
+  .form h3 { margin: 0 0 4px; font-size: 20px; } .form .aciklama { margin: 0 0 16px; color: #64748b; font-size: 14px; }
+  .form label { display: block; font-size: 13px; font-weight: 700; margin: 12px 0 5px; }
+  .form input, .form textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; }
+  .form input:focus, .form textarea:focus { outline: 2px solid var(--marka); outline-offset: 1px; border-color: transparent; }
+  .form textarea { min-height: 70px; resize: vertical; }
+  .form .tuzak { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .form .ozet-satir { margin-top: 14px; padding: 10px 12px; background: #f1f5f9; border-radius: 10px; font-size: 14px; display: flex; justify-content: space-between; }
+  .form .durum { margin-top: 12px; font-size: 14px; min-height: 1em; } .form .durum.hata { color: #b91c1c; } .form .durum.tamam { color: #15803d; font-weight: 700; }
+  .form .alt-dugmeler { display: flex; gap: 10px; margin-top: 16px; }
+  .form .alt-dugmeler button { flex: 1; font: inherit; font-size: 15px; font-weight: 700; padding: 11px; border-radius: 12px; border: 0; cursor: pointer; }
+  .form .gonder { background: var(--marka); color: #fff; } .form .gonder:disabled { opacity: .6; cursor: wait; } .form .vazgec { background: #e2e8f0; color: var(--koyu); }
   .kisa { display: none; }
   @media print {
     @page { size: A4; margin: 16mm; }
-    header, main { display: none !important; }
+    header, main, .perde { display: none !important; }
     body { background: #fff; }
     #cikti { display: block; color: #000; }
     .c-bas { display: flex; align-items: center; gap: 16px; border-bottom: 2px solid var(--marka); padding-bottom: 12px; margin-bottom: 18px; }
@@ -111,9 +125,24 @@
     <div class="dugmeler"><button class="hepsi" id="hepsi">Tümünü seç</button><button class="temizle" id="temizle">Temizle</button></div>
     <button class="pdf" id="pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg><span class="uzun">Seçimi PDF olarak al</span><span class="kisa">PDF al</span></button>
     <button class="pdf eposta" id="eposta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span class="uzun">Seçimi e-postayla gönder</span><span class="kisa">E-posta</span></button>
-    <div class="not">EURO, KDV hariç. "E-postayla gönder" seçiminizi destek@s4con.com.tr adresine hazır bir e-posta olarak açar. "PDF olarak al" açılan pencerede hedef olarak "PDF olarak kaydet"i seçin. Platform temeli her kurulumda yer alır. Tek oturum açma, onaylı iznin SAP'ye yazılması ve öncelikli destek ücretsizdir.</div>
+    <div class="not">EURO, KDV hariç. "E-postayla gönder" seçiminizi destek@s4con.com.tr adresine iletir, bir kopyası da size gelir. "PDF olarak al" açılan pencerede hedef olarak "PDF olarak kaydet"i seçin. Platform temeli her kurulumda yer alır. Tek oturum açma, onaylı iznin SAP'ye yazılması ve öncelikli destek ücretsizdir.</div>
   </aside>
 </main>
+<div class="perde" id="perde" role="dialog" aria-modal="true" aria-labelledby="f-baslik">
+  <form class="form" id="form" novalidate>
+    <h3 id="f-baslik">Seçimi gönder</h3>
+    <p class="aciklama">Seçiminiz destek@s4con.com.tr adresine iletilir, bir kopyası da e-posta adresinize gelir.</p>
+    <label for="f-firma">Firma *</label><input id="f-firma" name="firma" maxlength="120" required autocomplete="organization">
+    <label for="f-ad">Ad soyad *</label><input id="f-ad" name="ad" maxlength="120" required autocomplete="name">
+    <label for="f-eposta">E-posta *</label><input id="f-eposta" name="eposta" type="email" maxlength="120" required autocomplete="email">
+    <label for="f-tel">Telefon</label><input id="f-tel" name="telefon" type="tel" maxlength="40" autocomplete="tel">
+    <label for="f-not">Not</label><textarea id="f-not" name="not" maxlength="1000"></textarea>
+    <input class="tuzak" name="web" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="ozet-satir"><span id="f-adet"></span><b id="f-toplam"></b></div>
+    <div class="durum" id="f-durum" aria-live="polite"></div>
+    <div class="alt-dugmeler"><button type="button" class="vazgec" id="f-vazgec">Vazgeç</button><button type="submit" class="gonder" id="f-gonder">Gönder</button></div>
+  </form>
+</div>
 <section id="cikti" aria-hidden="true">
   <div class="c-bas"><img src="data:image/png;base64,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" alt="Europap Tezol"><div><h2>TezAI · Uygulama Seçimi</h2><p id="c-tarih"></p></div></div>
   <table><thead><tr><th>Bölüm</th><th>Uygulama</th><th class="sag">Fiyat</th></tr></thead><tbody id="c-satirlar"></tbody>
@@ -184,13 +213,49 @@ liste.addEventListener('click', (e) => {
 });
 document.getElementById('hepsi').onclick = () => { VERI.gruplar.forEach((g) => g.uygulamalar.forEach((_, i) => secili.add(anahtar(g.kod, i)))); guncelle(); };
 document.getElementById('temizle').onclick = () => { secili.clear(); guncelle(); };
+const EPOSTA_URL = 'https://script.google.com/macros/s/AKfycbymNjOwIGN0-D2muAQ06Ef-YUDVuK52dSrstHmrnqzvrKlzGA7q_Elcf8C7ZSAew4ua/exec';
+const perde = document.getElementById('perde'), form = document.getElementById('form'), durum = document.getElementById('f-durum'), gonder = document.getElementById('f-gonder');
+const seciliToplam = () => { let t = VERI.platform.fiyat; for (const g of VERI.gruplar) g.uygulamalar.forEach((u, i) => { if (secili.has(anahtar(g.kod, i))) t += u.fiyat; }); return t; };
+const kapat = () => perde.classList.remove('acik');
 document.getElementById('eposta').onclick = () => {
-  const satirlar = ['- ' + VERI.platform.ad + ': ' + para(VERI.platform.fiyat)];
-  let t = VERI.platform.fiyat;
-  for (const g of VERI.gruplar) g.uygulamalar.forEach((u, i) => { if (secili.has(anahtar(g.kod, i))) { satirlar.push('- ' + g.ad + ' / ' + u.ad + ': ' + para(u.fiyat)); t += u.fiyat; } });
-  const govde = 'Merhaba,\n\nTezAI fiyat hesaplayıcısında seçtiğimiz uygulamalar:\n\n' + satirlar.join('\n') + '\n\nDip toplam: ' + para(t) + ' (EURO, KDV hariç, tek seferlik)\n\nFirma:\nAd soyad:\nTelefon:\n';
-  location.href = 'mailto:destek@s4con.com.tr?subject=' + encodeURIComponent('TezAI uygulama seçimi') + '&body=' + encodeURIComponent(govde);
+  if (!EPOSTA_URL) {
+    const satirlar = ['- ' + VERI.platform.ad + ': ' + para(VERI.platform.fiyat)];
+    let t = VERI.platform.fiyat;
+    for (const g of VERI.gruplar) g.uygulamalar.forEach((u, i) => { if (secili.has(anahtar(g.kod, i))) { satirlar.push('- ' + g.ad + ' / ' + u.ad + ': ' + para(u.fiyat)); t += u.fiyat; } });
+    const govde = 'Merhaba,\n\nTezAI fiyat hesaplayıcısında seçtiğimiz uygulamalar:\n\n' + satirlar.join('\n') + '\n\nDip toplam: ' + para(t) + ' (EURO, KDV hariç, tek seferlik)\n\nFirma:\nAd soyad:\nTelefon:\n';
+    location.href = 'mailto:destek@s4con.com.tr?subject=' + encodeURIComponent('TezAI uygulama seçimi') + '&body=' + encodeURIComponent(govde);
+    return;
+  }
+  document.getElementById('f-adet').textContent = 'Platform + ' + secili.size + ' uygulama';
+  document.getElementById('f-toplam').textContent = para(seciliToplam());
+  durum.textContent = ''; durum.className = 'durum'; gonder.disabled = false; gonder.textContent = 'Gönder';
+  perde.classList.add('acik');
+  document.getElementById('f-firma').focus();
 };
+document.getElementById('f-vazgec').onclick = kapat;
+form.addEventListener('input', () => { if (durum.classList.contains('hata')) { durum.textContent = ''; durum.className = 'durum'; } });
+perde.addEventListener('click', (e) => { if (e.target === perde) kapat(); });
+addEventListener('keydown', (e) => { if (e.key === 'Escape' && perde.classList.contains('acik')) kapat(); });
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const v = Object.fromEntries(new FormData(form));
+  const hata = (m) => { durum.textContent = m; durum.className = 'durum hata'; };
+  if (!v.firma.trim() || !v.ad.trim()) return hata('Firma ve ad soyad gerekli.');
+  if (!/^[^\s@<>"]+@[^\s@<>"]+\.[a-z]{2,}$/i.test(v.eposta.trim())) return hata('Geçerli bir e-posta adresi yazın.');
+  gonder.disabled = true; gonder.textContent = 'Gönderiliyor…'; durum.textContent = ''; durum.className = 'durum';
+  try {
+    // text/plain: tarayıcı ön kontrol (CORS preflight) yapmaz, Apps Script doğrudan kabul eder
+    const r = await fetch(EPOSTA_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ ...v, secim: [...secili] }) });
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.hata || 'Gönderilemedi.');
+    durum.textContent = 'Gönderildi. Bir kopyası ' + v.eposta.trim() + ' adresine geldi.'; durum.className = 'durum tamam';
+    gonder.textContent = 'Gönderildi';
+    setTimeout(kapat, 3500);
+  } catch (err) {
+    gonder.disabled = false; gonder.textContent = 'Tekrar dene';
+    hata(err.message && !/fetch|network|json/i.test(err.message) ? err.message : 'Gönderilemedi. Bağlantınızı kontrol edip tekrar deneyin.');
+  }
+});
 document.getElementById('pdf').onclick = () => {
   const satir = (b, a, f) => '<tr><td>' + b + '</td><td>' + a + '</td><td class="sag">' + para(f) + '</td></tr>';
   let h = satir('Platform', VERI.platform.ad, VERI.platform.fiyat), t = VERI.platform.fiyat;
